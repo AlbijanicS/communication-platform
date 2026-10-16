@@ -1,0 +1,1160 @@
+/* See the Tailwind configuration guide for advanced usage
+   https://tailwindcss.com/docs/configuration */
+
+@import "tailwindcss" source(none);
+@source "../css";
+@source "../js";
+@source "../../lib/discord_clone_web";
+
+/* A Tailwind plugin that makes "hero-#{ICON}" classes available.
+   The heroicons installation itself is managed by your mix.exs */
+@plugin "../vendor/heroicons";
+
+/* daisyUI Tailwind Plugin. You can update this file by fetching the latest version with:
+   curl -sLO https://github.com/saadeghi/daisyui/releases/latest/download/daisyui.js
+   Make sure to look at the daisyUI changelog: https://daisyui.com/docs/changelog/ */
+@plugin "../vendor/daisyui" {
+  themes: false;
+}
+
+/* daisyUI theme plugin. You can update this file by fetching the latest version with:
+  curl -sLO https://github.com/saadeghi/daisyui/releases/latest/download/daisyui-theme.js
+  We ship with two themes, a light one inspired on Phoenix colors and a dark one inspired
+  on Elixir colors. Build your own at: https://daisyui.com/theme-generator/ */
+@plugin "../vendor/daisyui-theme" {
+  name: "dark";
+  default: false;
+  prefersdark: true;
+  color-scheme: "dark";
+  --color-base-100: oklch(30.33% 0.016 252.42);
+  --color-base-200: oklch(25.26% 0.014 253.1);
+  --color-base-300: oklch(20.15% 0.012 254.09);
+  --color-base-content: oklch(97.807% 0.029 256.847);
+  --color-primary: oklch(58% 0.233 277.117);
+  --color-primary-content: oklch(96% 0.018 272.314);
+  --color-secondary: oklch(58% 0.233 277.117);
+  --color-secondary-content: oklch(96% 0.018 272.314);
+  --color-accent: oklch(60% 0.25 292.717);
+  --color-accent-content: oklch(96% 0.016 293.756);
+  --color-neutral: oklch(37% 0.044 257.287);
+  --color-neutral-content: oklch(98% 0.003 247.858);
+  --color-info: oklch(58% 0.158 241.966);
+  --color-info-content: oklch(97% 0.013 236.62);
+  --color-success: oklch(60% 0.118 184.704);
+  --color-success-content: oklch(98% 0.014 180.72);
+  --color-warning: oklch(66% 0.179 58.318);
+  --color-warning-content: oklch(98% 0.022 95.277);
+  --color-error: oklch(58% 0.253 17.585);
+  --color-error-content: oklch(96% 0.015 12.422);
+  --radius-selector: 0.25rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.21875rem;
+  --size-field: 0.21875rem;
+  --border: 1.5px;
+  --depth: 1;
+  --noise: 0;
+}
+
+@plugin "../vendor/daisyui-theme" {
+  name: "light";
+  default: true;
+  prefersdark: false;
+  color-scheme: "light";
+  --color-base-100: oklch(98% 0 0);
+  --color-base-200: oklch(96% 0.001 286.375);
+  --color-base-300: oklch(92% 0.004 286.32);
+  --color-base-content: oklch(21% 0.006 285.885);
+  --color-primary: oklch(70% 0.213 47.604);
+  --color-primary-content: oklch(98% 0.016 73.684);
+  --color-secondary: oklch(55% 0.027 264.364);
+  --color-secondary-content: oklch(98% 0.002 247.839);
+  --color-accent: oklch(0% 0 0);
+  --color-accent-content: oklch(100% 0 0);
+  --color-neutral: oklch(44% 0.017 285.786);
+  --color-neutral-content: oklch(98% 0 0);
+  --color-info: oklch(62% 0.214 259.815);
+  --color-info-content: oklch(97% 0.014 254.604);
+  --color-success: oklch(70% 0.14 182.503);
+  --color-success-content: oklch(98% 0.014 180.72);
+  --color-warning: oklch(66% 0.179 58.318);
+  --color-warning-content: oklch(98% 0.022 95.277);
+  --color-error: oklch(58% 0.253 17.585);
+  --color-error-content: oklch(96% 0.015 12.422);
+  --radius-selector: 0.25rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.21875rem;
+  --size-field: 0.21875rem;
+  --border: 1.5px;
+  --depth: 1;
+  --noise: 0;
+}
+
+/* Add variants based on LiveView classes */
+@custom-variant phx-click-loading (.phx-click-loading&, .phx-click-loading &);
+@custom-variant phx-submit-loading (.phx-submit-loading&, .phx-submit-loading &);
+@custom-variant phx-change-loading (.phx-change-loading&, .phx-change-loading &);
+
+/* Use the data attribute for dark mode  */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/* Briefly call out an exact source Message reached through navigation. */
+
+@keyframes message-target-highlight {
+  0%,
+  35% {
+    background-color: color-mix(in oklab, var(--color-primary) 22%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-primary) 42%, transparent);
+  }
+
+  100% {
+    background-color: transparent;
+    box-shadow: inset 0 0 0 1px transparent;
+  }
+}
+
+.message-target-highlight {
+  animation: message-target-highlight var(--message-highlight-duration) ease-out;
+}
+
+/* Make LiveView wrapper divs transparent for layout */
+[data-phx-session], [data-phx-teleported-src] { display: contents }
+
+/* This file is for your main application CSS */
+
+#message-composer-shell .fieldset,
+#direct-message-composer-shell .fieldset {
+  margin-bottom: 0;
+  min-width: 0;
+}
+
+#message-composer-shell label,
+#direct-message-composer-shell label {
+  display: block;
+}
+
+#message-composer-shell input,
+#message-composer-shell textarea,
+#direct-message-composer-shell input,
+#direct-message-composer-shell textarea {
+  box-shadow: none;
+}
+
+/* Modern Graphite — the collaboration shell's shared visual system. */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/inter-400.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/inter-500.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/inter-600.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/inter-700.ttf") format("truetype");
+}
+
+:root {
+  color-scheme: dark;
+  --graphite-rail: #1b1d20;
+  --graphite-sidebar: #25282c;
+  --graphite-canvas: #303338;
+  --graphite-panel: #272a2e;
+  --graphite-input: #272a2f;
+  --graphite-line: rgb(255 255 255 / 6.5%);
+  --graphite-line-strong: rgb(255 255 255 / 11%);
+  --graphite-text: #f1f1ee;
+  --graphite-muted: #b8babd;
+  --graphite-quiet: #858a91;
+  --graphite-accent: #a8b4bd;
+  --graphite-online: #72b58d;
+  --graphite-danger: #dc7b82;
+  --graphite-on-accent: #1b1d20;
+  --graphite-nav-hover: rgb(255 255 255 / 6%);
+  --graphite-nav-active: rgb(255 255 255 / 9%);
+  --app-rail-width: 5rem;
+  --app-sidebar-width: 18rem;
+  --app-sidebar-expanded-width: 14rem;
+  --app-member-panel-width: 15.875rem;
+  --conversation-inline: 2rem;
+  --color-base-100: var(--graphite-canvas);
+  --color-base-200: var(--graphite-sidebar);
+  --color-base-300: var(--graphite-rail);
+  --color-base-content: var(--graphite-text);
+  --color-primary: var(--graphite-accent);
+  --color-primary-content: var(--graphite-on-accent);
+  --color-success: var(--graphite-online);
+  --color-error: var(--graphite-danger);
+  --radius-selector: 0.4375rem;
+  --radius-field: 0.4375rem;
+  --radius-box: 0.625rem;
+  --graphite-control-radius: var(--radius-selector);
+  --type-workspace: 0.9375rem;
+  --type-navigation: 0.875rem;
+  --type-message: 0.9375rem;
+  --type-metadata: 0.6875rem;
+  --type-presence: 0.75rem;
+}
+
+html,
+body {
+  background: var(--graphite-rail);
+}
+
+body {
+  color: var(--graphite-text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 0.9375rem;
+  line-height: 1.48;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgb(184 186 189 / 35%);
+  color: #fff;
+}
+
+*:focus-visible {
+  outline: 2px solid #d4dce0;
+  outline-offset: 2px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--graphite-rail);
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+
+#workspace-app-shell,
+#direct-messages-app-shell {
+  background: var(--graphite-canvas);
+}
+
+/* Global destination rail */
+#workspace-sidebar {
+  gap: 0.75rem;
+  padding: 0.875rem 0.625rem 0.75rem;
+  background: var(--graphite-rail);
+  border-right: 1px solid var(--graphite-line);
+  box-shadow: none;
+}
+
+#global-direct-messages-destination,
+#workspace-sidebar #workspaces > div > a {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+  box-shadow: none;
+}
+
+#global-direct-messages-destination {
+  margin-bottom: 0;
+  color: var(--graphite-on-accent);
+  background: var(--graphite-accent);
+  border: 0;
+}
+
+#global-activity-bell {
+  width: 3rem;
+  height: 3rem;
+  color: var(--graphite-muted);
+  border-radius: 1rem;
+}
+
+#global-direct-messages-destination:hover,
+#workspace-sidebar #workspaces > div > a:hover,
+#global-activity-bell:hover {
+  color: var(--graphite-text);
+  background: #34383d;
+  box-shadow: none;
+}
+
+#global-direct-messages-destination:hover {
+  color: var(--graphite-on-accent);
+  background: #c5cdd2;
+}
+
+#workspace-sidebar #workspaces {
+  gap: 0.75rem;
+  padding: 0;
+}
+
+@media (min-width: 1024px) {
+  #workspace-sidebar #workspaces {
+    padding-top: 0.375rem;
+  }
+}
+
+#workspace-sidebar #workspaces > div > a {
+  color: var(--graphite-muted);
+  background: var(--graphite-sidebar);
+  border: 0;
+}
+
+#workspace-sidebar #workspaces > div > a[aria-current="page"] {
+  color: var(--graphite-on-accent);
+  background: var(--graphite-accent);
+}
+
+#workspace-sidebar #workspaces > div > a[aria-current="page"]::before {
+  position: absolute;
+  left: -0.75rem;
+  width: 3px;
+  height: 1.5rem;
+  content: "";
+  background: var(--graphite-text);
+  border-radius: 0 3px 3px 0;
+}
+
+#workspace-sidebar > .h-px {
+  width: 2rem;
+  margin: 0;
+  background: var(--graphite-line-strong);
+}
+
+#workspace-create-toggle {
+  color: var(--graphite-quiet);
+}
+
+#workspace-create-toggle:hover {
+  color: var(--graphite-text);
+  background: var(--graphite-sidebar);
+}
+
+/* Secondary navigation surfaces */
+#channel-sidebar,
+#direct-messages-sidebar {
+  background: var(--graphite-sidebar);
+  border-color: var(--graphite-line);
+  box-shadow: none;
+}
+
+#channel-sidebar > div:first-child {
+  padding: 1.25rem;
+}
+
+#selected-workspace-name {
+  font-size: var(--type-workspace);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+#channel-sidebar .text-xs.uppercase,
+#direct-messages-sidebar .text-xs.uppercase,
+#workspace-members-sidebar .text-xs.uppercase {
+  color: var(--graphite-quiet);
+  font-size: var(--type-metadata);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: 0.075em;
+}
+
+#channels,
+#voice-channels {
+  margin-top: 0.5rem;
+}
+
+#channels [id^="channel-"],
+#voice-channels [data-voice-channel-row],
+#direct-messages-sidebar nav > a {
+  font-size: var(--type-navigation);
+  line-height: 1.35;
+  min-height: 2.25rem;
+  border-radius: var(--graphite-control-radius);
+}
+
+#channels [id^="channel-"] > a,
+#voice-channels [data-voice-channel-row] > button {
+  font-weight: 500;
+  letter-spacing: -0.004em;
+}
+
+#channels [id^="channel-"][aria-current="page"] > a,
+#channel-sidebar [id^="channel-"][aria-current="true"] > a {
+  font-weight: 600;
+}
+
+#channels [id^="channel-"][aria-current="page"],
+#channel-sidebar [id^="channel-"][aria-current="true"],
+#direct-messages-sidebar a[aria-current="page"] {
+  color: var(--graphite-text);
+  background: var(--graphite-nav-active);
+}
+
+#channels [id^="channel-"]:hover,
+#direct-messages-sidebar nav > a:hover {
+  background: var(--graphite-nav-hover);
+}
+
+#voice-channels [data-voice-channel-row] > button:hover {
+  background: var(--graphite-nav-hover);
+}
+
+#channel-sidebar [class*="border-t"],
+#direct-messages-sidebar nav {
+  border-color: var(--graphite-line);
+}
+
+#direct-messages-sidebar nav {
+  padding: 1.25rem;
+}
+
+#direct-messages-sidebar > .flex-1 {
+  padding: 1.25rem;
+}
+
+#direct-conversations {
+  gap: 0.25rem;
+}
+
+#direct-conversations > a {
+  border-radius: var(--graphite-control-radius);
+}
+
+#direct-conversations > a[aria-current="page"] {
+  background: var(--graphite-nav-active);
+}
+
+#direct-conversations > a:not([aria-current="page"]):hover {
+  background: var(--graphite-nav-hover);
+}
+
+#direct-messages-current-user,
+#channel-sidebar > div:last-child {
+  background: rgb(12 15 20 / 24%);
+  border-color: var(--graphite-line);
+  box-shadow: none;
+}
+
+/* Conversation canvas */
+#workspace-main,
+#direct-messages-main,
+#channel-message-surface {
+  background: var(--graphite-canvas);
+}
+
+#workspace-main > header {
+  display: flex;
+  align-items: center;
+  height: 4rem;
+  min-height: 4rem;
+  padding: 0 var(--conversation-inline);
+  background: var(--graphite-canvas);
+  border-bottom: 1px solid var(--graphite-line);
+  box-shadow: none;
+}
+
+#selected-channel-title {
+  font-size: var(--type-workspace);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+#channel-messages {
+  padding: 1.375rem var(--conversation-inline);
+}
+
+#channel-messages article[data-hover-surface="message-row"] {
+  border-radius: var(--graphite-control-radius);
+}
+
+#channel-messages article[data-message-row="full"] {
+  padding-block: 0.625rem;
+}
+
+#channel-messages article[data-message-row="compact"] {
+  padding-block: 0.1875rem;
+}
+
+#channel-messages article[data-message-row="compact"] + article[data-message-row="full"] {
+  margin-top: 0.375rem;
+}
+
+#channel-messages article[data-hover-surface="message-row"]:hover,
+#channel-messages article[data-hover-surface="message-row"]:focus-within {
+  background: rgb(255 255 255 / 3.5%);
+}
+
+#channel-message-surface [id$="-author"] {
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.004em;
+}
+
+#channel-message-surface [id$="-timestamp"] {
+  color: var(--graphite-quiet);
+  font-size: var(--type-metadata);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+#channel-messages [id$="-content"] {
+  max-width: 70ch;
+  color: #d9dde3;
+  font-size: var(--type-message);
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: 0.002em;
+}
+
+#channel-messages [id$="-reply-preview-author"],
+#channel-messages [id$="-reply-preview-content"],
+#channel-typing-indicator,
+#message-composer-sending-status {
+  font-size: var(--type-presence);
+  line-height: 1.4;
+}
+
+#message-composer-panel {
+  padding: 0.625rem var(--conversation-inline) 1.375rem;
+  background: var(--graphite-canvas);
+  box-shadow: 0 -1px 0 var(--graphite-line);
+}
+
+#channel-typing-indicator {
+  padding-inline: var(--conversation-inline);
+}
+
+#message-composer-shell,
+#direct-message-composer-shell {
+  border: 1px solid transparent;
+  border-radius: var(--graphite-control-radius);
+  background: var(--graphite-input);
+  box-shadow: none;
+}
+
+#message-composer-shell:focus-within,
+#direct-message-composer-shell:focus-within {
+  background: #2c3035;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+#message-composer-shell input,
+#message-composer-shell textarea,
+#direct-message-composer-shell input,
+#direct-message-composer-shell textarea {
+  border: 0;
+  color: var(--graphite-text);
+  box-shadow: none;
+}
+
+#message-composer-shell input:focus,
+#message-composer-shell input:focus-visible,
+#message-composer-shell textarea:focus,
+#message-composer-shell textarea:focus-visible,
+#direct-message-composer-shell input:focus,
+#direct-message-composer-shell input:focus-visible,
+#direct-message-composer-shell textarea:focus,
+#direct-message-composer-shell textarea:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+#message-composer-shell input::placeholder,
+#message-composer-shell textarea::placeholder,
+#direct-message-composer-shell input::placeholder {
+  color: var(--graphite-quiet);
+}
+
+#direct-message-composer-shell textarea::placeholder {
+  color: var(--graphite-quiet);
+}
+
+#message-composer-shell textarea {
+  min-height: 2.5rem;
+  max-height: 11rem;
+  overflow-y: hidden;
+}
+
+/* Keep message actions as a quiet utility, not a floating white toolbar. */
+#channel-messages [id$="-hover-actions"] {
+  gap: 0.25rem;
+}
+
+#channel-messages [id$="-reply"],
+#channel-messages [id$="-reaction-palette"],
+#channel-messages details[id$="-actions"] > summary {
+  background: var(--graphite-canvas);
+  border: 1px solid var(--graphite-line-strong);
+  box-shadow: 0 5px 14px rgb(0 0 0 / 14%);
+  backdrop-filter: none;
+}
+
+#channel-messages [id$="-reply"]:hover,
+#channel-messages details[id$="-actions"] > summary:hover,
+#channel-messages [id$="-reaction-palette"] button:hover {
+  background: #3a3d42;
+}
+
+#channel-messages [id$="-reaction-palette"] {
+  padding: 0.1875rem;
+}
+
+/* Reserve one stable action gutter so hovering never shifts message wrapping. */
+#channel-messages article[data-hover-surface="message-row"] [id$="-body"] {
+  padding-right: 9rem;
+}
+
+/* Member panel */
+#workspace-members-sidebar {
+  background: var(--graphite-panel);
+  border-left: 1px solid var(--graphite-line);
+  box-shadow: none;
+}
+
+#workspace-members-sidebar > div:first-child {
+  display: flex;
+  align-items: center;
+  height: 4rem;
+  min-height: 4rem;
+  padding: 0 1.25rem;
+  border-bottom: 1px solid var(--graphite-line);
+  box-shadow: none;
+}
+
+#workspace-members {
+  padding: 1.25rem;
+}
+
+#workspace-members [data-presence-state] {
+  min-height: 2.5rem;
+  border-radius: var(--graphite-control-radius);
+}
+
+#workspace-members [data-presence-state] > div > p:first-child {
+  font-size: var(--type-navigation);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.004em;
+}
+
+#workspace-members [data-member-status] {
+  font-size: var(--type-presence);
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: 0.006em;
+}
+
+#voice-channels [id$="-roster"] [role="listitem"] {
+  font-size: var(--type-presence);
+  line-height: 1.35;
+}
+
+#voice-channels [id$="-roster"] [role="listitem"] > span:not([id$="-avatar"]) {
+  font-weight: 500;
+  letter-spacing: -0.002em;
+}
+
+#global-voice-controls-status,
+#global-voice-controls [data-voice-controls-mute],
+#global-voice-controls [data-voice-controls-deafen],
+#global-voice-controls [data-voice-controls-leave] {
+  font-size: var(--type-presence);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+}
+
+/* Voice is an active session control, not another item in the channel list. */
+#global-voice-controls {
+  border-top: 1px solid var(--graphite-line);
+  background: rgb(12 15 20 / 18%);
+}
+
+#global-voice-connection-panel {
+  margin: 0;
+  padding: 0.75rem 0.875rem;
+  border-width: 0 0 1px;
+  border-radius: 0;
+  background: #2b2e33;
+  box-shadow: none;
+}
+
+#global-voice-controls [data-voice-controls-local-actions] {
+  margin-top: 0.625rem;
+  gap: 0.375rem;
+}
+
+#global-voice-controls [data-voice-controls-mute],
+#global-voice-controls [data-voice-controls-deafen],
+#global-voice-controls [data-voice-controls-leave] {
+  min-height: 2rem;
+}
+
+#workspace-members [data-presence-state]:hover {
+  background: rgb(255 255 255 / 4.5%);
+}
+
+#workspace-members [data-member-status="online"] {
+  color: var(--graphite-online);
+}
+
+/* Graphite state treatments */
+.bg-primary,
+.btn-primary {
+  background-color: var(--graphite-accent);
+  color: var(--graphite-on-accent);
+}
+
+.text-primary {
+  color: var(--graphite-accent);
+}
+
+.text-success {
+  color: var(--graphite-online);
+}
+
+.bg-success {
+  background-color: var(--graphite-online);
+}
+
+@media (max-width: 1023px) {
+  :root {
+    --conversation-inline: 1rem;
+  }
+
+  #workspace-app-shell,
+  #direct-messages-app-shell {
+    overflow: auto;
+  }
+
+  #workspace-sidebar {
+    align-self: start;
+    flex-direction: row;
+    height: auto;
+    min-height: 4.5rem;
+    padding: 0.75rem 1rem;
+  }
+
+  #workspace-sidebar #workspaces {
+    flex: 1;
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  #workspace-sidebar > .h-px,
+  #workspace-create-toggle {
+    display: none;
+  }
+
+  #activity-preview-popover {
+    position: fixed;
+    top: 4.75rem;
+    right: 1rem;
+    left: 1rem;
+    width: auto;
+    max-width: none;
+    max-height: calc(100dvh - 5.75rem);
+    transform: none;
+  }
+
+  #activity-preview-feed {
+    max-height: min(28rem, calc(100dvh - 12rem));
+  }
+
+}
+
+/* Persistent participant areas: the remote feed leads, Self-preview supports it. */
+.call-participant-picture {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  background: var(--graphite-rail);
+}
+
+.call-participant-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--graphite-text);
+  background: var(--graphite-panel);
+}
+
+.call-participant-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--graphite-input);
+  font-weight: 600;
+}
+
+.call-participant-status {
+  color: var(--graphite-text);
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+}
+
+#direct-call-participants[data-participants-active="true"] #direct-call-local-preview-region {
+  width: 44%;
+  margin-left: auto;
+}
+
+#direct-call-participants[data-participants-active="true"] #direct-call-remote-video-status {
+  min-height: 2.5rem;
+}
+
+#direct-call-participants[data-participants-active="true"] #direct-call-local-preview-status {
+  min-height: 3.75rem;
+}
+
+/* The owner surface occupies normal Conversation flow, above Messages. */
+@media (max-width: 1023px) {
+  #direct-messages-app-shell:has(#direct-conversation-call-stage:not([hidden])) {
+    /* Desktop zoom can leave less height than navigation alone requires.
+       Keep a scrollable Conversation row instead of collapsing it to zero. */
+    grid-template-rows: auto minmax(12rem, 36dvh) minmax(24rem, 1fr);
+  }
+}
+
+#direct-conversation-call-stage {
+  flex: 0 0 auto;
+  min-width: 0;
+  max-height: min(24rem, 45dvh);
+  overflow: auto;
+  border-bottom: 1px solid var(--graphite-panel);
+  scrollbar-width: thin;
+}
+
+#direct-conversation-call-stage #direct-call-dock {
+  position: static;
+  width: 100%;
+  border-radius: 0;
+  padding: 0.75rem var(--conversation-inline);
+  box-shadow: none;
+}
+
+#direct-conversation-call-stage #direct-call-participants {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.3fr);
+  align-items: start;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+#direct-conversation-call-stage #direct-call-participants:has(#direct-call-local-preview-region[hidden]) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+#direct-conversation-call-stage #direct-call-participants figure {
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+}
+
+#direct-conversation-call-stage #direct-call-remote-video-region .call-participant-picture {
+  aspect-ratio: auto;
+  height: clamp(5rem, 16dvh, 9rem);
+}
+
+#direct-conversation-call-stage #direct-call-participants .call-participant-status {
+  min-height: 2.5rem;
+  overflow-wrap: anywhere;
+}
+
+#direct-conversation:has(#direct-conversation-call-stage:not([hidden])) > div {
+  overflow-y: auto;
+}
+
+#direct-conversation:has(#direct-conversation-call-stage:not([hidden])) #direct-message-surface {
+  min-height: 12rem;
+}
+
+@media (max-height: 600px) {
+  #direct-conversation-call-stage #direct-call-remote-video-region .call-participant-picture {
+    display: none;
+  }
+
+  #direct-conversation-call-stage #direct-call-local-preview-region .call-participant-picture {
+    display: none;
+  }
+
+  #direct-conversation-call-stage #direct-call-participants .call-participant-status {
+    min-height: 0;
+  }
+}
+
+#direct-conversation-call-stage #direct-call-participants #direct-call-local-preview-region {
+  width: 100%;
+}
+
+#direct-conversation-call-stage #direct-call-dock-controls {
+  margin-top: 0.25rem;
+  padding: 0.25rem 0;
+  background: var(--graphite-panel);
+}
+
+#direct-conversation-call-stage #direct-call-dock-title {
+  font-size: 0.875rem;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+#direct-conversation-call-stage #direct-call-dock-media-state {
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 640px) {
+  #direct-conversation:has(#direct-conversation-call-stage:not([hidden])) #direct-messages .pr-40 {
+    padding-right: 0;
+  }
+
+  #direct-conversation:has(#direct-conversation-call-stage:not([hidden])) .direct-message-actions {
+    position: static;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+  }
+
+  #direct-conversation:has(#direct-conversation-call-stage:not([hidden])) .direct-message-actions > * {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+/* A compact Call tray reserves its measured height across authenticated pages. */
+/* Size is local presentation state; both modes retain the same media elements. */
+#direct-conversation-call-stage:has(#direct-call-dock[data-stage-expanded="true"]) {
+  max-height: min(34rem, 55dvh);
+}
+
+#direct-conversation-call-stage #direct-call-dock[data-stage-expanded="true"] #direct-call-remote-video-region .call-participant-picture {
+  display: block;
+  height: clamp(5rem, 28dvh, 16rem);
+}
+
+#direct-conversation-call-stage #direct-call-dock[data-stage-expanded="true"] #direct-call-local-preview-region .call-participant-picture {
+  display: block;
+}
+
+@media (max-height: 600px) {
+  #direct-conversation-call-stage #direct-call-dock[data-stage-expanded="true"] .call-participant-picture {
+    max-height: 12dvh;
+  }
+}
+
+body[data-call-compact="true"] #direct-call-page-content {
+  height: calc(100dvh - var(--call-panel-height, 0px));
+  overflow: auto;
+}
+
+body[data-call-compact="true"] #direct-call-page-content:has(#username_form) {
+  /* Leave room for the destination's input focus indicators beside the tray. */
+  padding: 1rem;
+}
+
+body[data-call-compact="true"] #direct-call-page-content input {
+  scroll-margin-block: 0.5rem;
+}
+
+body[data-call-compact="true"] :is(#direct-messages-app-shell, #workspace-app-shell) {
+  bottom: var(--call-panel-height, 0px);
+  min-height: 0;
+}
+
+body[data-call-compact="true"] #direct-call-dock {
+  inset: auto 0 0;
+  display: grid;
+  grid-template-columns: minmax(10rem, 1fr) minmax(14rem, 1.25fr) auto;
+  gap: 0.5rem 1rem;
+  width: 100%;
+  max-height: 42dvh;
+  overflow: auto;
+  border-radius: 0;
+  padding: 0.75rem 1rem;
+  background: var(--graphite-panel);
+  box-shadow: 0 -4px 16px rgb(0 0 0 / 0.2);
+  scrollbar-width: thin;
+}
+
+body[data-call-compact="true"] #direct-call-participants {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.44fr);
+  gap: 0.75rem;
+  margin: 0;
+}
+
+body[data-call-compact="true"] #direct-call-participants:has(#direct-call-local-preview-region[hidden]) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+body[data-call-compact="true"] #direct-call-participants figure {
+  min-width: 0;
+  margin: 0;
+}
+
+body[data-call-compact="true"] #direct-call-participants #direct-call-local-preview-region {
+  width: 100%;
+}
+
+body[data-call-compact="true"] .call-participant-picture {
+  aspect-ratio: auto;
+  height: clamp(3rem, 10dvh, 5.5rem);
+}
+
+body[data-call-compact="true"] #direct-call-dock[data-stage-expanded="true"] {
+  max-height: 50dvh;
+}
+
+body[data-call-compact="true"] #direct-call-dock[data-stage-expanded="true"] .call-participant-picture {
+  height: clamp(4rem, 18dvh, 10rem);
+}
+
+body[data-call-compact="true"] #direct-call-participants .call-participant-status {
+  min-height: 0;
+  overflow-wrap: anywhere;
+}
+
+body[data-call-compact="true"] #direct-call-dock-return {
+  grid-column: 3;
+  grid-row: 1;
+  align-self: start;
+}
+
+body[data-call-compact="true"] #direct-call-dock-controls {
+  grid-column: 3;
+  grid-row: 2 / span 2;
+  align-content: start;
+  max-width: 12rem;
+  margin: 0;
+}
+
+body[data-call-compact="true"] #direct-call-dock-media-state,
+body[data-call-compact="true"] #direct-call-self-camera-status {
+  grid-column: 1;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  body[data-call-compact="true"] #direct-call-dock {
+    grid-template-columns: minmax(0, 1fr) minmax(5rem, 0.55fr);
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  body[data-call-compact="true"] #direct-call-participants {
+    grid-template-columns: minmax(0, 1fr);
+    grid-row: 1 / span 2;
+  }
+
+  body[data-call-compact="true"] #direct-call-dock-return {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  body[data-call-compact="true"] #direct-call-dock-controls {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    max-width: none;
+  }
+
+  body[data-call-compact="true"] #direct-call-dock-media-state {
+    grid-column: 1 / -1;
+  }
+}
+
+body[data-call-compact="true"] #direct-call-dock-title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Programmatic focus stays visible when a Call surface closes or changes. */
+:is(#direct-call-dock-title, #direct-call-incoming-title):focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+#direct-call-focus-fallback:focus {
+  position: fixed;
+  inset: auto auto 1rem 1rem;
+  z-index: 60;
+  width: auto;
+  height: auto;
+  padding: 0.75rem 1rem;
+  clip: auto;
+  clip-path: none;
+  overflow: visible;
+  white-space: normal;
+  background: var(--color-base-200);
+  color: var(--color-base-content);
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+#direct-message-composer-shell:focus-within {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+#direct-message-composer-shell input {
+  /* Native Tab scrolls the input; keep its larger surrounding ring in view. */
+  scroll-margin-block: 1.5rem;
+}
+
+#direct-call-dock :is(button, a, [tabindex]) {
+  scroll-margin-block: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Retain the exact Message navigation cue without the fading animation. */
+  .message-target-highlight {
+    background-color: color-mix(in oklab, var(--color-primary) 22%, transparent);
+  }
+}

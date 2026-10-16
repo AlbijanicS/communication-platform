@@ -1,0 +1,58 @@
+name: Quality gates
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      MIX_ENV: test
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.19.5'
+          otp-version: '28.5'
+          version-type: strict
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '26.0.0'
+      - uses: actions/cache@v4
+        with:
+          path: deps
+          key: deps-${{ runner.os }}-${{ runner.arch }}-otp28.5-elixir1.19.5-${{ hashFiles('mix.lock') }}
+      - name: Install dependencies
+        run: mix deps.get --check-locked
+      - name: Check original formatting
+        run: mix format --check-formatted
+      - name: Precommit (compile, Credo, JavaScript, Elixir)
+        run: mix precommit
+      - name: Reject tracked changes from quality checks
+        if: ${{ always() }}
+        run: git diff --exit-code HEAD --
+      - name: Coverage (85% minimum)
+        run: mix test --cover

@@ -1,0 +1,9 @@
+#!/bin/sh
+set -eu
+
+: "${DISCORD_CLONE_USER_EMAIL:?must be set}"
+: "${DISCORD_CLONE_USERNAME:?must be set}"
+: "${DISCORD_CLONE_USER_PASSWORD:?must be set}"
+
+cd -P -- "$(dirname -- "$0")"
+exec ./discord_clone eval DiscordClone.Release.provision_user

@@ -1,0 +1,36 @@
+<Layouts.app flash={@flash} current_scope={@current_scope}>
+  <main id="invite-preview-page" class="min-h-screen bg-base-200 px-4 py-12 sm:px-6 lg:px-8">
+    <section class="mx-auto flex min-h-[calc(100vh-6rem)] max-w-md items-center">
+      <div class="w-full rounded border border-base-300 bg-base-100 p-6 shadow-sm">
+        <div class="flex size-12 items-center justify-center rounded bg-primary text-primary-content">
+          <.icon name="hero-user-plus" class="size-6" />
+        </div>
+
+        <p class="mt-6 text-xs font-semibold uppercase tracking-wide text-primary">
+          Workspace invite
+        </p>
+        <h1 id="invite-preview-title" class="mt-2 text-2xl font-semibold tracking-tight">
+          Join {@preview.workspace_name}
+        </h1>
+        <p id="invite-preview-inviter" class="mt-3 text-sm text-base-content/70">
+          Invited by {@preview.inviter_username || "a workspace member"}.
+        </p>
+        <p id="invite-preview-account" class="mt-2 text-sm text-base-content/70">
+          You are accepting as {@preview.accepting_username}.
+        </p>
+
+        <.form
+          id="invite-preview-accept-form"
+          for={%{}}
+          action={"/invites/#{@preview.invite_code}/accept"}
+          method="post"
+          class="mt-6"
+        >
+          <.button type="submit" class="btn btn-primary w-full">
+            Accept invite
+          </.button>
+        </.form>
+      </div>
+    </section>
+  </main>
+</Layouts.app>
